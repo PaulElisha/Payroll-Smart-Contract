@@ -7,13 +7,13 @@
   
   pragma solidity ^ 0.8.17;
 
-  import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/IERC20.sol";
+  import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
   contract Payroll{
   
   address employer;
   
-  IERC20 BUSD = IERC20(0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56);
+  IERC20 private immutable BUSD;
 
   // show workings with mappings of addresses and their corresponding permmissions.
 
@@ -22,8 +22,9 @@
   mapping (address => uint) moment;
   mapping (address => uint) residual;
 
-  constructor () public {
+  constructor (address _BUSD) {
       employer = msg.sender;
+      BUSD = IERC20(_BUSD);
   }
 
   // add a modifier for security
