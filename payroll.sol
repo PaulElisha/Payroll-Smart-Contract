@@ -3,14 +3,14 @@
    leanred how to build this payroll from https://coinsbench.com/payroll-contract-with-solidity-6c37a2cc874c
 */
 
-// SPDX-License-Identifier ; MIT
+// SPDX-License-Identifier: MIT;
   
   pragma solidity ^ 0.8.17;
 
   import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
   contract Payroll{
-  
+    error Allowed();
   address employer;
   
   IERC20 private immutable BUSD;
@@ -34,16 +34,20 @@
       _;
   }
 
+  modifier addressAllowed(address _address) {
+    if(allowed[_address]) revert Allowed();
+    _;
+  }
+
   // let's spell out the functions
 
-  function addEmployee(address _address, uint _allowance) external onlyOwner {
+  function addEmployee(address _address, uint _allowance) external onlyOwner addressAllowed(_address){
      allowed [_address] = true;
      moment [_address] = block.timestamp;
      allowance [_address] = _allowance * 1 ether;
-
   }
 
-  function claim() external {
+  function claim() external addressAllowed(_address){
     // we cannot use the multiplication sign with mappings
     // so it is better to reset them locally now
     // if you try it, it will bring a Built-in Binary error 
@@ -54,7 +58,6 @@
 
     // put checks in place
 
-    require(allowed[msg.sender] == true,"The employer didn't allow this specific address to withdraw");
     require(amount > 0, "You cannot have nothing, bruh.");
 
     if(BUSD.balanceOf(address(this)) < amount){
@@ -69,7 +72,7 @@
     }
   }
 
-  function updateAllowance(address _address, uint _amount) external onlyOwner {
+  function updateAllowance(address _address, uint _amount) external onlyOwner addressAllowed(_address) {
       allowance [_address] = _amount * 2 ether;
   }
 
