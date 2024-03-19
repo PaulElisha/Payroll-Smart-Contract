@@ -37,7 +37,7 @@
     }
 
     modifier addressAllowed(address _address) {
-      if(!allowed[_address]) revert Allowed();
+      if(allowed[_address]) revert Allowed();
       _;
     }
 
